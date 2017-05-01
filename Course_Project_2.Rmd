@@ -1,0 +1,101 @@
+---
+title: "Course Project Part 2"
+author: "Ming Wei SIW"
+output:
+  html_document: 
+    keep_md: yes
+---
+
+#Overview
+
+
+#Data Analysis
+
+##Load Data
+
+```{r}
+library(datasets)
+data("ToothGrowth")
+```
+
+##Explore the Data
+
+```{r}
+str(ToothGrowth)
+#convert dose to a categorical variable
+ToothGrowth$dose <- as.factor(ToothGrowth$dose)
+```
+
+Since there is a categorical variable involved, boxplots may be a good exploratory plot.
+
+###Boxplot
+
+```{r}
+with(ToothGrowth,
+  boxplot(len ~ supp, col = "steelblue", 
+          main = "Boxplot of Tooth Length and Supplement Type",
+          ylab = "Tooth Length", xlab = "Supplement Type"))
+```
+
+The median of tooth length when supplement type is OJ seems to be higher than when supplement type is VC.
+
+###Boxplot of Dose Level and Tooth Length
+
+```{r}
+with(ToothGrowth,
+     plot(len ~ dose, col = rgb(0.5, 0, 0.5, 0.5), 
+          xlab = "Dose Level", ylab = "Tooth Length",
+          main = "Boxplot of Dose Level and Tooth Length"))
+```
+
+Based on this boxplot, high dose level seems to be linked to greater tooth length.
+
+##Data Summary
+
+```{r}
+summary(ToothGrowth)
+```
+
+##Summary of Tooth Length by Supplement Type
+
+```{r}
+tapply(ToothGrowth$len, ToothGrowth$supp, summary)
+```
+
+Supplement type OJ seems to yield greater tooth growth than supplement type VC.
+
+##Summary of Tooth Length by Dose Level
+
+```{r}
+tapply(ToothGrowth$len, ToothGrowth$dose, summary)
+```
+
+Higher dose level is shown to have greater mean of tooth growth.
+
+##Hypothesis Test
+
+###Mean of Tooth Length by Supplement Type
+
+```{r}
+require(statsr)
+inference(len, supp, data = ToothGrowth, type = "ht", statistic = "mean",
+          method = "theoretical", alternative = "twosided")
+```
+
+As p value of hypothesis test is still above 0.05, do not reject null hypothesis that mean values are equal for both supplement type.
+
+###Mean of Tooth Length by Supplement Type (Bootstrap)
+
+```{r}
+inference(len, supp, data = ToothGrowth, type = "ht", statistic = "mean",
+          method = "simulation", alternative = "twosided")
+```
+
+Via bootstrapping with 15000 replications, the p value of hypothesis test is still above 0.05, thus null of equal means between tooth length of different supplement type is not rejected.
+
+###Assumption for Hypothesis Test
+
+- Variables in the dataset must be IID (Independent and Identically Distributed)
+
+- Tooth Growth follows a normal distribution
+
